@@ -1,0 +1,115 @@
+<!DOCTYPE html> 
+<html>
+	<body>
+		<style>
+			body {
+				padding: 50px; 
+			}
+
+			#bar-container { 
+				margin-top: 10px;
+				height: 30px;
+				width: 100%;
+			  	background-color: cornsilk;
+			}
+
+			.bar {
+				background-color: cornsilk;
+				border: 1px solid red; 
+				display: block;
+				height: 30px;
+				width: 100%;
+			}
+
+			.progress-bar {
+				display: inline-block;
+				box-sizing: border-box;
+				float: left;
+				height: 32px;
+			}
+		</style>
+
+		<input id="bar-widths-input"/>
+
+		<div id="bar-container">
+			<div class="bar">
+				
+			</div>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script>
+			// Render a horizontal percentage-based bar chart that displays 
+			// multiple bars side-by-side in a single row, based on the sizes 
+			// given in the input array.
+
+			// Input format is a comma-separated list of numbers.
+			// For example, entering `1,2,1` will render three bars, with the 
+			// middle bar having twice the width of the other bars.
+
+			// The bar chart will be re-rendered as the values in the input updates. 
+			// Feel free to make changes to the given markup and CSS.
+
+			// Write your code here.
+
+			$(document).ready(function(){
+				$("#bar-widths-input").keyup(function(){
+					var paramsObj = setupProgressBar(this.value);
+
+					if(paramsObj != false) {
+						convertFloatToPercent(paramsObj.total, paramsObj.inputList);
+					}
+					generateProgressBar(paramsObj.inputList);
+				});
+
+				var setupProgressBar = function(_values) {
+					var splitValues = _values.split(',');
+					var tempInputList = [];
+					var total = 0;
+
+					for(var i in splitValues) {
+						splitValues[i] = splitValues[i].trim();
+
+						if(i > 50) { break; }
+						if(isNaN(filterFloat(splitValues[i]))) { return false; }
+						if(parseFloat(splitValues[i]) == 0) { continue; }
+
+						tempInputList.push(parseFloat(splitValues[i]));
+						total += parseFloat(splitValues[i]);
+					}
+
+					return {
+						total: total,
+						inputList: tempInputList
+					}
+				}
+
+				var convertFloatToPercent = function(_total, _array) {
+					for (var i in _array) {
+						_array[i] = (100 / _total) * _array[i];
+					}
+				}
+
+				var generateProgressBar = function(_array) {
+					$('#bar-container').empty();
+
+					if(_array == undefined || _array.length == 0) {
+						$('#bar-container').append('<div class="bar"></div>');
+					} else {
+						for (var i in _array) {
+				  			$('#bar-container').append('<div class="bar progress-bar" style="width: ' + _array[i] + '%"></div>');
+						}
+					}
+				};
+
+				var filterFloat = function(_value) {
+				    if (/^(\-|\+)?([0-9]+(\.[0-9]+)?|Infinity)$/.test(_value)) {
+				    	return Number(_value);
+				    }
+
+				  	return NaN;
+				};
+			});
+		</script>
+	</body> 
+</html>
